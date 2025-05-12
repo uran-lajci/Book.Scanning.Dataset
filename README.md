@@ -7,12 +7,12 @@ A repository for creating and analysing the test dataset instances for the **Boo
 Create Conda Environment
 
 ```bash
-  conda create -n book_scanning python=3.10
+  conda create -n book_scanning_dataset python=3.10
 ```
 
 Activate Environment
 ```bash
-  conda activate book_scanning
+  conda activate book_scanning_dataset
 ```
 
 Install Requirements
