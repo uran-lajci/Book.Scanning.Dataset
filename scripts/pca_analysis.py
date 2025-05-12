@@ -45,7 +45,7 @@ plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'],
 # Plot random-synthetic instances
 srw_mask = result['source'] == 'synthetic-google-hashcode'
 plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
-            c='green', label='Random Synthetic', alpha=0.7, edgecolor='k')
+            c='green', label='Synthetic Google Hashcode', alpha=0.7, edgecolor='k')
 
 # Annotate points
 for i, txt in enumerate(result['instance_name']):
