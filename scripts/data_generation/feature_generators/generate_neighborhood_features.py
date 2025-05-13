@@ -19,7 +19,7 @@ INTEGER_FEATURES = ['num_books', 'num_libraries', 'num_days']
 
 
 def generate_neighboring_instances(existing_features: pd.DataFrame,
-                                   buffer_size: int,
+                                   buffer_frac: float,
                                    num_instances: int,
                                    source: str,
                                    instance_prefix: str
@@ -37,8 +37,14 @@ def generate_neighboring_instances(existing_features: pd.DataFrame,
         for feature, (theo_min, theo_max) in THEORETICAL_CONSTRAINTS.items():
             base_value = base_instance[feature]
             
-            new_min = max(theo_min, base_value - buffer_size)
-            new_max = min(theo_max, base_value + buffer_size)
+            buffer_size = base_value * buffer_frac
+
+            if random.random() < 0.2:
+                new_min = max(theo_min, base_value)
+                new_max = min(theo_max, base_value)
+            else:
+                new_min = max(theo_min, base_value - buffer_size)
+                new_max = min(theo_max, base_value + buffer_size)
             
             if feature in INTEGER_FEATURES:
                 new_value = random.randint(int(new_min), int(new_max))
@@ -66,14 +72,14 @@ def main(input_path: str,
          source: str,
          instance_prefix: str,
          number_of_instances: int,
-         buffer_size: int
+         buffer_frac: float
          ) -> None:
     existing_features = pd.read_csv(input_path)
     validate_input_data(existing_features)
     
     new_instances = generate_neighboring_instances(
         existing_features=existing_features,
-        buffer_size=buffer_size,
+        buffer_frac=buffer_frac,
         num_instances=number_of_instances,
         source=source,
         instance_prefix=instance_prefix
@@ -101,8 +107,8 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--number_of_instances', type=int, default=10,
                         help='Number of instances to generate (default: 10)')
     
-    parser.add_argument('-b', '--buffer_size', type=int, default=10,
-                        help='Maximum absolute deviation from original values (default: 10)')
+    parser.add_argument('-b', '--buffer_frac', type=float, default=0.1,
+                        help='Maximum absolute deviation from original values (default: 1%)')
 
     args = parser.parse_args()
     
@@ -111,4 +117,5 @@ if __name__ == '__main__':
         args.source,
         args.instance_prefix,
         args.number_of_instances,
-        args.buffer_size)
+        args.buffer_frac)
+    

@@ -43,9 +43,9 @@ plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'],
             c='red', label='Synthetic Real World', alpha=0.7, edgecolor='k')
 
 # Plot random-synthetic instances
-# srw_mask = result['source'] == 'synthetic-google-hashcode'
-# plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
-#             c='green', label='Synthetic Google Hashcode', alpha=0.7, edgecolor='k')
+srw_mask = result['source'] == 'synthetic-google-hashcode'
+plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
+            c='green', label='Synthetic Google Hashcode', alpha=0.7, edgecolor='k')
 
 srw_mask = result['source'] == 'synthetic-random'
 plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
@@ -57,7 +57,8 @@ plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'],
 
 # Annotate points
 for i, txt in enumerate(result['instance_name']):
-    plt.annotate(txt, (result.loc[i, 'PC1'], result.loc[i, 'PC2']), fontsize=8, alpha=0.6)
+    # plt.annotate(txt, (result.loc[i, 'PC1'], result.loc[i, 'PC2']), fontsize=8, alpha=0.6)
+    plt.annotate('', (result.loc[i, 'PC1'], result.loc[i, 'PC2']), fontsize=8, alpha=0.6)
 
 plt.title('PCA: PC1 vs PC2')
 plt.xlabel('Principal Component 1')
