@@ -43,22 +43,24 @@ plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'],
             c='red', label='Synthetic Real World', alpha=0.7, edgecolor='k')
 
 # Plot random-synthetic instances
-srw_mask = result['source'] == 'synthetic-google-hashcode'
-plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
-            c='green', label='Synthetic Google Hashcode', alpha=0.7, edgecolor='k')
+# srw_mask = result['source'] == 'synthetic-google-hashcode'
+# plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
+            # c='green', label='Synthetic Google Hashcode', alpha=0.7, edgecolor='k')
 
-srw_mask = result['source'] == 'synthetic-random'
-plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
-            c='yellow', label='Synthetic Random', alpha=0.7, edgecolor='k')
+# srw_mask = result['source'] == 'synthetic-random'
+# plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
+#             c='yellow', label='Synthetic Random', alpha=0.7, edgecolor='k')
 
-srw_mask = result['source'] == 'initial-random-instances'
-plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
-            c='black', label='Initial Synthetic Random', alpha=0.7, edgecolor='k')
+# srw_mask = result['source'] == 'initial-synthetic-random'
+# plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
+            # c='black', label='Initial Synthetic Random', alpha=0.7, edgecolor='k')
 
 # Annotate points
 for i, txt in enumerate(result['instance_name']):
-    # plt.annotate(txt, (result.loc[i, 'PC1'], result.loc[i, 'PC2']), fontsize=8, alpha=0.6)
-    plt.annotate('', (result.loc[i, 'PC1'], result.loc[i, 'PC2']), fontsize=8, alpha=0.6)
+    if txt in ['b_read_on.txt', 'c_incunabula.txt', 'd_tough_choices.txt', 'e_so_many_books.txt', 'f_libraries_of_the_world.txt']:
+        plt.annotate(txt, (result.loc[i, 'PC1'], result.loc[i, 'PC2']), fontsize=14, alpha=1.0)
+    else:
+        plt.annotate('', (result.loc[i, 'PC1'], result.loc[i, 'PC2']), fontsize=3, alpha=0.2)
 
 plt.title('PCA: PC1 vs PC2')
 plt.xlabel('Principal Component 1')

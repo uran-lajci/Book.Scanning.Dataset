@@ -1,2 +1,2 @@
 num_books,num_libraries,num_days,average_book_score,variance_book_score,books_per_library_avg,signup_time_avg,shippings_per_library_avg,book_duplications_per_library_avg,instance_name,source
-100000,10000,100000,300.76415,29879.089664777966,15.0282,506.0797,49511.3775,11.689,c_incunabula.txt,google-hashcode
+100000,1000,700,401.11142,53362.16054558367,509.342,166.192,7.467,506.183,f_libraries_of_the_world.txt,google-hashcode

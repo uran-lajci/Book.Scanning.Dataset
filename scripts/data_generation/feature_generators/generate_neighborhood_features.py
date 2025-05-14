@@ -1,6 +1,7 @@
 """Generates neighboring synthetic instances by perturbing features from existing data within a buffer zone."""
 import pandas as pd
 import random
+import uuid
 import argparse
 
 THEORETICAL_CONSTRAINTS = {
@@ -29,8 +30,10 @@ def generate_neighboring_instances(existing_features: pd.DataFrame,
     for i in range(num_instances):
         base_instance = existing_features.sample(1).iloc[0]
         
+        random_id = uuid.uuid4().hex[:8] 
+
         new_instance = {
-            'instance_name': f'{instance_prefix}_{i+1:04d}',
+            'instance_name': f'{instance_prefix}_{random_id}_{i+1:04d}',
             'source': source,
         }
 
