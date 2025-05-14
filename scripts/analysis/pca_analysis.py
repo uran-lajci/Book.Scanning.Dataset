@@ -38,22 +38,22 @@ plt.scatter(result.loc[gh_mask, 'PC1'], result.loc[gh_mask, 'PC2'],
             c='blue', label='Google Hashcode', alpha=0.7, edgecolor='k')
 
 # Plot synthetic-real-world instances
-srw_mask = result['source'] == 'synthetic-real-world'
+srw_mask = result['source'] == 'real-world'
 plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
             c='red', label='Synthetic Real World', alpha=0.7, edgecolor='k')
 
 # Plot random-synthetic instances
-# srw_mask = result['source'] == 'synthetic-google-hashcode'
-# plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
-            # c='green', label='Synthetic Google Hashcode', alpha=0.7, edgecolor='k')
+srw_mask = result['source'] == 'synthetic-google-hashcode'
+plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
+            c='green', label='Synthetic Google Hashcode', alpha=0.7, edgecolor='k')
 
-# srw_mask = result['source'] == 'synthetic-random'
-# plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
-#             c='yellow', label='Synthetic Random', alpha=0.7, edgecolor='k')
+srw_mask = result['source'] == 'synthetic-random'
+plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
+            c='yellow', label='Synthetic Random', alpha=0.7, edgecolor='k')
 
-# srw_mask = result['source'] == 'initial-synthetic-random'
-# plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
-            # c='black', label='Initial Synthetic Random', alpha=0.7, edgecolor='k')
+srw_mask = result['source'] == 'initial-synthetic-random'
+plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'], 
+            c='black', label='Initial Synthetic Random', alpha=0.7, edgecolor='k')
 
 # Annotate points
 for i, txt in enumerate(result['instance_name']):
