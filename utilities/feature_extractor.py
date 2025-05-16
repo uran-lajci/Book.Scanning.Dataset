@@ -34,17 +34,13 @@ def extract_features(instance: Instance) -> dict:
     shippings = [lib.books_per_day for lib in instance.libraries]
     features['shippings_per_library_avg'] = sum(shippings) / len(shippings)
 
-    # Book duplication stats
+    # Count how many libraries each book appears in
     book_freq = defaultdict(int)
     for lib in instance.libraries:
-        for book in lib.book_ids:
-            book_freq[book] += 1
+        for book_id in lib.book_ids:
+            book_freq[book_id] += 1
 
-    duplication_per_lib = []
-    for lib in instance.libraries:
-        duplicated = sum(1 for book in lib.book_ids if book_freq[book] > 1)
-        duplication_per_lib.append(duplicated)
-
-    features['book_duplications_per_library_avg'] = sum(duplication_per_lib) / len(duplication_per_lib)
+    duplicated_books = sum(1 for freq in book_freq.values() if freq >= 2)
+    features['book_duplication_rate'] = duplicated_books / instance.num_books
 
     return features

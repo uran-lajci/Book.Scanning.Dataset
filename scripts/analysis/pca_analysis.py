@@ -59,6 +59,8 @@ plt.scatter(result.loc[srw_mask, 'PC1'], result.loc[srw_mask, 'PC2'],
 for i, txt in enumerate(result['instance_name']):
     if txt in ['b_read_on.txt', 'c_incunabula.txt', 'd_tough_choices.txt', 'e_so_many_books.txt', 'f_libraries_of_the_world.txt']:
         plt.annotate(txt, (result.loc[i, 'PC1'], result.loc[i, 'PC2']), fontsize=14, alpha=1.0)
+    elif txt in ['oxford_bodleian_archives.txt', 'appalachian_regional_project.txt']:
+        plt.annotate(txt, (result.loc[i, 'PC1'], result.loc[i, 'PC2']), fontsize=14, alpha=1.0)
     else:
         plt.annotate('', (result.loc[i, 'PC1'], result.loc[i, 'PC2']), fontsize=3, alpha=0.2)
 
