@@ -62,8 +62,10 @@ def main(features_input_path: Path, features_output_path: Path) -> None:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--features_input_path', type=Path, default='features.csv')
-    parser.add_argument('-o', '--features_output_path', type=Path, default='reduced_features.csv')
+    parser.add_argument('-i', '--features_input_path', type=Path, 
+                        default='temp_data/features.csv')
+    parser.add_argument('-o', '--features_output_path', type=Path, 
+                        default='temp_data/reduced_features.csv')
 
     args = parser.parse_args()
     main(args.features_input_path, args.features_output_path)

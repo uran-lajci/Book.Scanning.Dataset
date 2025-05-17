@@ -24,8 +24,8 @@ def main(features_path: Path) -> None:
 
     fig.update_layout(
         title='Feature Visualization (Hover to See Instance Names)',
-        xaxis_title='Principal Component 1 (PC1)',
-        yaxis_title='Principal Component 2 (PC2)'
+        xaxis_title='Principal Component 1',
+        yaxis_title='Principal Component 2'
     )
     
     fig.show()
@@ -33,7 +33,8 @@ def main(features_path: Path) -> None:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--features_path', type=Path, default='reduced_features.csv')
+    parser.add_argument('-f', '--features_path', type=Path, 
+                        default='temp_data/reduced_features.csv')
 
     args = parser.parse_args()
     main(args.features_path)

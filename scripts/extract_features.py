@@ -23,8 +23,6 @@ from utilities.instance import read_instance
 def main(instances_dir: Path, output_file_path: Path) -> None:
     if not instances_dir.is_dir():
         raise FileNotFoundError(f'Directory does not exist: {instances_dir}')
-    if not output_file_path.is_file():
-        raise FileNotFoundError(f'File does not exist: {output_file_path}')
     
     instance_paths = glob.glob(f'{instances_dir}/**/*.txt')
     instance_data = []
@@ -44,8 +42,10 @@ def main(instances_dir: Path, output_file_path: Path) -> None:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--instances_dir', type=Path, default='../instances')
-    parser.add_argument('-o', '--output_file_path', type=Path, default='features.csv')
+    parser.add_argument('-i', '--instances_dir', type=Path, 
+                        default='../instances')
+    parser.add_argument('-o', '--output_file_path', type=Path, 
+                        default='temp_data/features.csv')
 
     args = parser.parse_args()
     main(args.instances_dir, args.output_file_path)
