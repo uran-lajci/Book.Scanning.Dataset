@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 from utilities.feature_extractor import extract_features
-from utilities.instance import parse_input
+from utilities.instance import read_instance
 
 INSTANCES_DIR = '../instances/**/*.txt'
 
@@ -16,7 +16,7 @@ def main(output_file_path: Path) -> None:
     for instance_path in glob.glob(INSTANCES_DIR):
         print(instance_path)
         try:
-            instance = parse_input(instance_path)
+            instance = read_instance(instance_path)
         except Exception:
             print(instance_path)
             continue

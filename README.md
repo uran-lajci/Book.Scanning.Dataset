@@ -4,6 +4,8 @@ A repository for creating and analysing the test dataset instances for the **Boo
 
 ## Setup and Installation
 
+Before proceeding with setup and installation, ensure Conda is installed, Python 3.10 is available, and the project repository is cloned.
+
 Create Conda Environment
 
 ```bash
