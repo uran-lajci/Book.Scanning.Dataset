@@ -12,10 +12,10 @@ Validation Checks:
     - Total books across libraries ≤ 1e6
 
 Example usage:
-    python3 check_instance_validity.py --instance_path ./instance.txt
+    python check_instance_validity.py --instance_path ./instance.txt
 
 Aliases:
-    -i, --instance_path
+    -i,     --instance_path
 """
 from pathlib import Path
 
@@ -26,7 +26,7 @@ from utilities.instance import read_instance
 
 def main(instance_path: Path) -> None:
     if not instance_path.is_file():
-        raise FileNotFoundError()
+        raise FileNotFoundError(f'File does not exist: {instance_path}')
 
     instance = read_instance(instance_path)
 

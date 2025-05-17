@@ -3,7 +3,7 @@ import numpy as np
 import argparse
 from pathlib import Path
 from collections import defaultdict
-from utilities.instance import Instance, Library, write_instance_to_file, read_instance
+from utilities.instance import Instance, Library, write_instance, read_instance
 from utilities.feature_extractor import extract_features
 from uuid import uuid4
 
@@ -172,7 +172,7 @@ def generate_dataset(output_dir, num_instances, parent_instances):
     for i in range(num_instances):
         instance = generate_instance(parent_instances)
         output_path = Path(output_dir) / f"{uuid4()}_{i}.txt"
-        write_instance_to_file(instance, output_path)
+        write_instance(instance, output_path)
         print(f"Generated {output_path}")
 
 

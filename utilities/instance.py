@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class Library:
     id: int
@@ -7,6 +8,7 @@ class Library:
     signup_days: int
     books_per_day: int
     total_books: int
+
 
 @dataclass
 class Instance:
@@ -54,10 +56,10 @@ def read_instance(file_path: str) -> Instance:
     )
 
 
-def write_instance_to_file(instance: Instance, output_path: str):
+def write_instance(instance: Instance, output_path: str) -> None:
     with open(output_path, 'w') as f:
-        f.write(f"{instance.num_books} {instance.num_libraries} {instance.num_days}\n")
-        f.write(" ".join(map(str, instance.book_scores)) + "\n")
+        f.write(f'{instance.num_books} {instance.num_libraries} {instance.num_days}\n')
+        f.write(' '.join(map(str, instance.book_scores)) + '\n')
         for lib in instance.libraries:
-            f.write(f"{lib.total_books} {lib.signup_days} {lib.books_per_day}\n")
-            f.write(" ".join(map(str, lib.book_ids)) + "\n")
+            f.write(f'{lib.total_books} {lib.signup_days} {lib.books_per_day}\n')
+            f.write(' '.join(map(str, lib.book_ids)) + '\n')

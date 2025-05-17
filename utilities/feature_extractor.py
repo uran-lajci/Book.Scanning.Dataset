@@ -1,36 +1,41 @@
-"""Feature Extractor for Book Scanning Instance."""
-import numpy as np
+"""Feature Extractor for Book Scanning Instance.
+
+The extracted features are:
+    - num_books (int): Total number of distinct books in the instance
+    - num_libraries (int): Total number of libraries available
+    - num_days (int): Total scanning days allocated
+    - average_book_score (float): Mean of all book scores
+    - variance_book_score (float): Variance of book score distribution
+    - books_per_library_avg (float): Average books per library collection
+    - signup_time_avg (float): Average library registration duration
+    - shippings_per_library_avg (float): Average daily shipping capacity
+    - book_duplication_rate (float): Ratio of books appearing in multiple libraries
+"""
 from collections import defaultdict
 
 from utilities.instance import Instance
 
 
 def extract_features(instance: Instance) -> dict:
-    # Basic counts
     features = {
         'num_books': instance.num_books,
         'num_libraries': instance.num_libraries,
         'num_days': instance.num_days
     }
 
-    # Book score statistics
     scores = instance.book_scores
     mean_score = sum(scores) / len(scores)
     features['average_book_score'] = mean_score
 
-    # Variance
     variance = sum((x - mean_score) ** 2 for x in scores) / len(scores)
     features['variance_book_score'] = variance
 
-    # Books per library stats
     books_per_lib = [lib.total_books for lib in instance.libraries]
     features['books_per_library_avg'] = sum(books_per_lib) / len(books_per_lib)
 
-    # Signup time stats
     signup_times = [lib.signup_days for lib in instance.libraries]
     features['signup_time_avg'] = sum(signup_times) / len(signup_times)
 
-    # Shipping capacity (books/day) stats
     shippings = [lib.books_per_day for lib in instance.libraries]
     features['shippings_per_library_avg'] = sum(shippings) / len(shippings)
 
