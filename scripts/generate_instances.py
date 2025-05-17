@@ -170,7 +170,7 @@ def generate_dataset(output_dir, num_instances, parent_instances):
     
     for i in range(num_instances):
         instance = generate_instance(parent_instances)
-        output_path = Path(output_dir) / f"total_instance_{i}.txt"
+        output_path = Path(output_dir) / f"final_instances_{i}.txt"
         write_instance_to_file(instance, output_path)
         print(f"Generated {output_path}")
 

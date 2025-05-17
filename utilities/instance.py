@@ -231,7 +231,7 @@ def parse_input(file_path: str) -> Instance:
         print(f"⚠️ Violation: Expected {nr_libraries} libraries, found {len(libraries)}")
         has_problem = True
 
-    print(f"Upper bound (sum of all book scores): {sum(book_scores)}")
+    # print(f"Upper bound (sum of all book scores): {sum(book_scores)}")
     return Instance(
         num_books=nr_books,
         num_libraries=nr_libraries,
@@ -240,15 +240,15 @@ def parse_input(file_path: str) -> Instance:
         libraries=libraries
     )
 
-import glob
-import os
-import sys
+# import glob
+# import os
+# import sys
 
-if __name__ == '__main__':
-    for txt_path in glob.glob('C:\\Users\\Jetë\\Documents\\GitHub\\Book.Scanning.Dataset\\instances\\synthetic-google-hashcode\\*.txt'):
-        if instance_has_problem(txt_path):
-            print(f'Remove ')
-#             os.remove(txt_path)
+# if __name__ == '__main__':
+#     for txt_path in glob.glob('C:\\Users\\Jetë\\Documents\\GitHub\\Book.Scanning.Dataset\\instances\\synthetic-google-hashcode\\*.txt'):
+#         if instance_has_problem(txt_path):
+#             print(f'Remove ')
+# #             os.remove(txt_path)
 
 
 def write_instance_to_file(instance: Instance, output_path: str):
