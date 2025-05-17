@@ -7,12 +7,12 @@ Processing Steps:
 
 Example usage:
     python3 reduce_features.py \
-        --features_input_path ./features.csv \
-        --features_output_path ./reduced_features.csv
+        --features_input_path temp_data/features.csv \
+        --features_output_path temp_data/reduced_features.csv
 
 Aliases:
-    -i, --input_path
-    -o, --output_path
+    -i,     --input_path
+    -o,     --output_path
 """
 from pathlib import Path
 from sklearn.preprocessing import StandardScaler

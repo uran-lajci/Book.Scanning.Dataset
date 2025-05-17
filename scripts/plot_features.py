@@ -1,3 +1,16 @@
+"""Interactive Visualization of Reduced Feature Space.
+
+Visualization Features:
+    - Color-coded by source category
+    - Interactive hover showing instance name
+    - Browser-based plot with zoom/pan capabilities
+
+Example usage:
+    python visualize_features.py --features_path temp_data/reduced_features.csv
+
+Aliases:
+    -f,     --features_path
+"""
 from pathlib import Path
 
 import argparse

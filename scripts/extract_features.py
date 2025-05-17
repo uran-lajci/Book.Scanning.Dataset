@@ -3,7 +3,7 @@
 Example usage:
     python extract_features_dataset.py \
         --instances_dir ../instances \
-        --output_file_path ./features.csv
+        --output_file_path temp_data/features.csv
 
 Aliases:
     -i,     --instances_dir
