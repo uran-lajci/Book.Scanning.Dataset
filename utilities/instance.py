@@ -240,13 +240,21 @@ def parse_input(file_path: str) -> Instance:
         libraries=libraries
     )
 
-# import glob
-# import os
-# import sys
+import glob
+import os
+import sys
 
-# if __name__ == '__main__':
-#     for txt_path in glob.glob('C:\\Users\\Jetë\\Documents\\GitHub\\Book.Scanning.Dataset\\instances\\synthetic-google-hashcode\\*.txt'):
-#         if instance_has_problem(txt_path):
-#             print(f'Remove {txt_path}')
+if __name__ == '__main__':
+    for txt_path in glob.glob('C:\\Users\\Jetë\\Documents\\GitHub\\Book.Scanning.Dataset\\instances\\synthetic-google-hashcode\\*.txt'):
+        if instance_has_problem(txt_path):
+            print(f'Remove ')
 #             os.remove(txt_path)
 
+
+def write_instance_to_file(instance: Instance, output_path: str):
+    with open(output_path, 'w') as f:
+        f.write(f"{instance.num_books} {instance.num_libraries} {instance.num_days}\n")
+        f.write(" ".join(map(str, instance.book_scores)) + "\n")
+        for lib in instance.libraries:
+            f.write(f"{lib.total_books} {lib.signup_days} {lib.books_per_day}\n")
+            f.write(" ".join(map(str, lib.book_ids)) + "\n")
