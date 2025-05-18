@@ -1,3 +1,4 @@
+from pathlib import Path
 from dataclasses import dataclass
 
 
@@ -19,7 +20,7 @@ class Instance:
     libraries: list[Library]
 
 
-def read_instance(file_path: str) -> Instance:
+def read_instance(file_path: Path) -> Instance:
     with open(file_path, 'r') as f:
         lines = [line.strip() for line in f if line.strip()]
 
