@@ -50,7 +50,7 @@ def generate_features_from_parents(parent1: dict, parent2: dict) -> dict:
 
 
 def perturb_features(parent: dict) -> dict:
-    PERTURBATION_RANGE = (-0.6, 0.6)
+    PERTURBATION_RANGE = (-0.05, 0.5)
     DIRECTION_CHOICE = [True, False]
 
     features = {}
@@ -61,9 +61,9 @@ def perturb_features(parent: dict) -> dict:
         perturb_rate = random.uniform(*PERTURBATION_RANGE)
         
         if random.choice(DIRECTION_CHOICE):
-            modified_value = original_value * (50 + perturb_rate)
+            modified_value = original_value * (1 + perturb_rate)
         else:
-            modified_value = original_value * (50 - perturb_rate)
+            modified_value = original_value * (1 - perturb_rate)
         
         features[feature_name] = np.clip(modified_value, min_bound, max_bound)
 
