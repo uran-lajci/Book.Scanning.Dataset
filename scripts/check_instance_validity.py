@@ -99,9 +99,15 @@ def main(instance_path: Path) -> None:
         print(f'Instance is valid.')
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--instance_path', type=Path, required=True)
+# if __name__ == '__main__':
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument('-i', '--instance_path', type=Path, required=True)
 
-    args = parser.parse_args()
-    main(args.instance_path)
+#     args = parser.parse_args()
+#     main(args.instance_path)
+
+import glob
+
+if __name__ == '__main__':
+    for _instance_path in glob.glob(f'../instances/**/*.txt'):
+        main(Path(_instance_path))

@@ -1,14 +1,13 @@
 import random
 import numpy as np
 import argparse
+import glob
 from pathlib import Path
-from collections import defaultdict
 from utilities.instance import Instance, Library, write_instance, read_instance
 from utilities.feature_extractor import extract_features
 from uuid import uuid4
 
 
-# Problem constraints definition
 CONSTRAINTS = {
     'num_books': (1, 100000),
     'num_libraries': (1, 100000),
@@ -21,66 +20,79 @@ CONSTRAINTS = {
     'book_duplication_rate': (0, 100)
 }
 
-def generate_features_from_parents(parent1, parent2):
-    """Generate features between two parent instances"""
-    features = {}
-    for key in CONSTRAINTS:
-        min_val = min(parent1[key], parent2[key])
-        max_val = max(parent1[key], parent2[key])
-        features[key] = random.uniform(min_val, max_val)
-    return enforce_constraints(features)
 
-def perturb_features(parent, min_perturb=-0.05, max_perturb=0.5):
-    """Create new features by perturbing a single parent instance"""
-    features = {}
-    for key in CONSTRAINTS:
-        min_bound, max_bound = CONSTRAINTS[key]
-        original = parent[key]
-        
-        # Apply perturbation while maintaining bounds
-        perturbation = random.uniform(min_perturb, max_perturb)
-        if random.choice([1, 2]) == 1:
-            new_value = original * (1 + perturbation)
-        else:
-            new_value = original * (1 - perturbation)
-
-        features[key] = np.clip(new_value, min_bound, max_bound)
-    return enforce_constraints(features)
-
-def enforce_constraints(features):
-    """Ensure all features respect problem constraints"""
-    # Basic value clamping
+def enforce_constraints(features: dict) -> dict:
     for key, (min_val, max_val) in CONSTRAINTS.items():
         features[key] = np.clip(features[key], min_val, max_val)
     
-    # Special constraints
-    features['books_per_library_avg'] = min(
-        features['books_per_library_avg'],
-        min(100000, 1e6 / max(1, features['num_libraries'])))
-    
-    # Ensure integer counts
+    num_libs  = max(1, features['num_libraries'])
+    max_books_per_lib = min(100_000, 1e6 / num_libs )
+    features['books_per_library_avg'] = min(features['books_per_library_avg'], max_books_per_lib)
+
     features['num_books'] = int(features['num_books'])
     features['num_libraries'] = int(features['num_libraries'])
     features['num_days'] = int(features['num_days'])
     
     return features
 
-def create_book_scores(features):
-    """Generate book scores respecting variance constraints"""
-    if features['variance_book_score'] >= 250000:
-        half = features['num_books'] // 2
-        return [1000]*half + [0]*(features['num_books'] - half)
-    return np.clip(
-        np.random.normal(
-            features['average_book_score'],
-            np.sqrt(features['variance_book_score']),
-            features['num_books']
-        ), 0, 1000
-    ).astype(int).tolist()
 
-def create_libraries(features):
-    """Create libraries with constraint enforcement"""
-    # Calculate total books with hard constraint
+def generate_features_from_parents(parent1: dict, parent2: dict) -> dict:
+    features = {}
+
+    for key in CONSTRAINTS:
+        min_val = min(parent1[key], parent2[key])
+        max_val = max(parent1[key], parent2[key])
+        features[key] = random.uniform(min_val, max_val)
+    
+    features = enforce_constraints(features)
+
+    return features
+
+
+def perturb_features(parent: dict) -> dict:
+    PERTURBATION_RANGE = (-0.6, 0.6)
+    DIRECTION_CHOICE = [True, False]
+
+    features = {}
+    
+    for feature_name, (min_bound, max_bound) in CONSTRAINTS.items():
+        original_value = parent[feature_name]
+        
+        perturb_rate = random.uniform(*PERTURBATION_RANGE)
+        
+        if random.choice(DIRECTION_CHOICE):
+            modified_value = original_value * (50 + perturb_rate)
+        else:
+            modified_value = original_value * (50 - perturb_rate)
+        
+        features[feature_name] = np.clip(modified_value, min_bound, max_bound)
+
+    features = enforce_constraints(features)
+
+    return features
+
+
+def create_book_scores(features: dict[str, float]) -> list[int]:
+    MAX_VARIANCE_THRESHOLD = 250_000
+    MAX_SCORE = 1000
+    MIN_SCORE = 0
+
+    if features['variance_book_score'] >= MAX_VARIANCE_THRESHOLD:
+        half_books = features['num_books'] // 2
+        remaining_books = features['num_books'] - half_books
+        return [MAX_SCORE] * half_books + [MIN_SCORE] * remaining_books
+    
+    mean_score = features['average_book_score']
+    std_deviation = np.sqrt(features['variance_book_score'])
+    num_books = features['num_books']
+
+    raw_scores = np.random.normal(mean_score, std_deviation, num_books)
+    clipped_scores = np.clip(raw_scores, MIN_SCORE, MAX_SCORE)
+    
+    return clipped_scores.astype(int).tolist()
+
+
+def create_libraries(features: dict) -> list[Library]:
     max_total_books = min(
         int(features['num_libraries'] * features['books_per_library_avg']),
         1_000_000
@@ -88,36 +100,27 @@ def create_libraries(features):
     avg_books = max_total_books // features['num_libraries']
     remainder = max_total_books % features['num_libraries']
     
-    # Book management
     all_books = list(range(features['num_books']))
     required_duplicates = int(features['num_books'] * features['book_duplication_rate'] / 100)
     dup_books = set(random.sample(all_books, required_duplicates))
     
-    # Create library structure
     libraries = []
-    book_assignments = defaultdict(list)
     
-    # Assign books to libraries
     for lib_id in range(features['num_libraries']):
         books = []
         lib_size = avg_books + (1 if lib_id < remainder else 0)
         
-        # Prioritize duplicates first
         if dup_books:
             dup_selection = random.sample(list(dup_books), min(lib_size, len(dup_books)))
             books.extend(dup_selection)
             lib_size -= len(dup_selection)
         
-        # Fill remaining slots WITHOUT duplicates
         if lib_size > 0:
-            # Create a list of available books (not yet in this library)
             available_books = [b for b in all_books if b not in books]
             
-            # If we don't have enough unique books, reduce the library size
             if lib_size > len(available_books):
                 lib_size = len(available_books)
             
-            # Sample without replacement
             if lib_size > 0:
                 books.extend(random.sample(available_books, lib_size))
         
@@ -128,32 +131,18 @@ def create_libraries(features):
             books_per_day=int(np.clip(features['shippings_per_library_avg'], 1, 1e5)),
             total_books=len(books)
         ))
-        
-        # Track assignments for duplication rate
-        for b in books:
-            book_assignments[b].append(lib_id)
-    
-    # Verify duplication rate and adjust if necessary
-    actual_dups = sum(1 for book, libs in book_assignments.items() if len(libs) > 1)
-    target_dups = int(features['num_books'] * features['book_duplication_rate'] / 100)
-    
-    if actual_dups < target_dups and features['book_duplication_rate'] > 0:
-        # We need to add more duplications
-        print(f"Warning: Target duplications {target_dups}, actual {actual_dups}")
-        # Further optimization could be done here if needed
-    
+
     return libraries
 
-def generate_instance(parents):
-    """Generate a single valid instance"""
-    if len(parents) >= 2 and random.random() < 0.7:
-        parent1, parent2 = random.sample(parents, 2)
+
+def generate_instance(existing_features: list[dict]) -> Instance:    
+    if len(existing_features) >= 2 and random.random() < 0.7:
+        parent1, parent2 = random.sample(existing_features, 2)
         features = generate_features_from_parents(parent1, parent2)
     else:
-        parent = random.choice(parents)
+        parent = random.choice(existing_features)
         features = perturb_features(parent)
     
-    # Create instance components
     book_scores = create_book_scores(features)
     libraries = create_libraries(features)
     
@@ -165,61 +154,40 @@ def generate_instance(parents):
         libraries=libraries
     )
 
-def generate_dataset(output_dir, num_instances, parent_instances):
-    """Main generation workflow"""
-    Path(output_dir).mkdir(parents=True, exist_ok=True)
+
+def read_features(instances_dir: Path) -> list[dict]:
+    instance_paths = glob.glob(f'{instances_dir}/*.txt')
     
-    for i in range(num_instances):
-        instance = generate_instance(parent_instances)
-        output_path = Path(output_dir) / f"{uuid4()}_{i}.txt"
+    features = []
+    for intance_path in instance_paths:
+        instance = read_instance(intance_path)
+        instance_features = extract_features(instance)
+        features.append(instance_features)
+      
+    return features
+
+
+def main(instances_dir: Path, num_instances: int, output_dir: Path) -> None:
+    existing_features = read_features(instances_dir)
+    
+    for idx in range(num_instances):
+        instance = generate_instance(existing_features)
+        
+        unique_id = uuid4()
+        instance_name = f'{unique_id}_{idx}.txt'
+        output_path = Path(output_dir) / instance_name
+
         write_instance(instance, output_path)
-        print(f"Generated {output_path}")
+
+        print(f'Generated instance {instance_name} and saved in: {output_path}')
 
 
-def load_parent_instances(parents_dir: str) -> list:
-    """Load features from parent instance files"""
-    parent_instances = []
-    
-    for path in Path(parents_dir).glob('*.txt'):
-        try:
-            # Parse instance using existing utility
-            instance = read_instance(str(path))
-            
-            # Extract features using existing extractor
-            features = extract_features(instance)
-            
-            # Convert to format expected by generator
-            parent_instances.append({
-                'num_books': instance.num_books,
-                'num_libraries': instance.num_libraries,
-                'num_days': instance.num_days,
-                'average_book_score': features['average_book_score'],
-                'variance_book_score': features['variance_book_score'],
-                'books_per_library_avg': features['books_per_library_avg'],
-                'signup_time_avg': features['signup_time_avg'],
-                'shippings_per_library_avg': features['shippings_per_library_avg'],
-                'book_duplication_rate': features['book_duplication_rate']
-            })
-        except Exception as e:
-            print(f"Couldn't load {path}: {str(e)}")
-    
-    return parent_instances
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Generate synthetic instances')
-    parser.add_argument('-o', '--output_dir', type=str, required=True, 
-                       help='Output directory for instances')
-    parser.add_argument('-n', '--num_instances', type=int, required=True,
-                       help='Number of instances to generate')
-    parser.add_argument('-p', '--parents_dir', type=str, required=True,
-                       help='Directory containing parent instances')
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--instances_dir', type=Path, required=True)
+    parser.add_argument('-n', '--num_instances', type=int, required=True)
+    parser.add_argument('-o', '--output_dir', type=Path, required=True)
     
     args = parser.parse_args()
     
-    # Load parent instances
-    parent_instances = load_parent_instances(args.parents_dir)
-    
-    if not parent_instances:
-        raise ValueError("No valid parent instances found in directory")
-    
-    generate_dataset(args.output_dir, args.num_instances, parent_instances)
+    main(args.instances_dir, args.num_instances, args.output_dir)
